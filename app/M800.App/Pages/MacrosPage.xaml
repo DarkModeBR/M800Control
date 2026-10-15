@@ -1,0 +1,109 @@
+<Page x:Class="M800.App.Pages.MacrosPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      xmlns:common="clr-namespace:M800.App.Common"
+      Title="Macros"
+      ScrollViewer.CanContentScroll="False">
+    <Page.Resources>
+        <Style x:Key="RecordButton" TargetType="ui:Button" BasedOn="{StaticResource {x:Type ui:Button}}">
+            <Setter Property="Content" Value="Gravar" />
+            <Setter Property="Icon" Value="{ui:SymbolIcon Record24}" />
+            <Setter Property="Appearance" Value="Primary" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsRecording}" Value="True">
+                    <Setter Property="Content" Value="Parar" />
+                    <Setter Property="Icon" Value="{ui:SymbolIcon Stop24}" />
+                    <Setter Property="Appearance" Value="Danger" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </Page.Resources>
+    <ScrollViewer common:Responsive.MinContentWidth="460" common:Responsive.MinContentHeight="540">
+    <Grid Margin="{DynamicResource PageMargin}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <TextBlock Text="Macros" Style="{StaticResource PageTitle}" />
+        <TextBlock Grid.Row="1" Style="{StaticResource PageSubtitle}"
+                   Text="Sequências de teclas e cliques que um botão do mouse executa. Depois de criar, ligue a macro a um botão na página Botões." />
+        <Grid Grid.Row="2" common:Responsive.StackBelow="600" common:Responsive.StackedRows="190,*">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="270" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <ui:Card Margin="0,0,16,0" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch">
+                <DockPanel>
+                    <WrapPanel DockPanel.Dock="Top" Margin="0,0,0,8">
+                        <ui:Button Content="Nova" Icon="{ui:SymbolIcon Add24}" Appearance="Primary" Command="{Binding NewMacroCommand}" Margin="0,0,6,6" />
+                        <ui:Button Icon="{ui:SymbolIcon Rename24}" ToolTip="Renomear" Command="{Binding RenameMacroCommand}" Margin="0,0,6,6" />
+                        <ui:Button Icon="{ui:SymbolIcon Copy24}" ToolTip="Duplicar" Command="{Binding DuplicateMacroCommand}" Margin="0,0,6,6" />
+                        <ui:Button Icon="{ui:SymbolIcon Delete24}" ToolTip="Excluir" Command="{Binding DeleteMacroCommand}" Margin="0,0,6,6" />
+                    </WrapPanel>
+                    <ListBox ItemsSource="{Binding Macros}" SelectedItem="{Binding SelectedMacro}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Margin="0,4">
+                                    <TextBlock Text="{Binding Name}" FontWeight="SemiBold" />
+                                    <TextBlock Text="{Binding Summary}" Style="{StaticResource CardLabel}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </DockPanel>
+            </ui:Card>
+
+            <ui:Card Grid.Column="1" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch" IsEnabled="{Binding HasSelection}">
+                <DockPanel>
+                    <StackPanel DockPanel.Dock="Top">
+                        <WrapPanel Margin="0,0,0,8">
+                            <ui:Button Style="{StaticResource RecordButton}" Command="{Binding ToggleRecordingCommand}" Margin="0,0,8,6" />
+                            <ui:Button Content="Inserir tecla" Icon="{ui:SymbolIcon Keyboard24}" Command="{Binding InsertKeyCommand}" Margin="0,0,8,6" />
+                            <ui:Button Content="Inserir clique" Icon="{ui:SymbolIcon CursorClick24}" Command="{Binding InsertClickCommand}" Margin="0,0,8,6" />
+                            <ui:Button Icon="{ui:SymbolIcon ArrowUp24}" ToolTip="Mover para cima" Command="{Binding MoveUpCommand}" Margin="0,0,4,6" />
+                            <ui:Button Icon="{ui:SymbolIcon ArrowDown24}" ToolTip="Mover para baixo" Command="{Binding MoveDownCommand}" Margin="0,0,4,6" />
+                            <ui:Button Icon="{ui:SymbolIcon Delete24}" ToolTip="Apagar evento" Command="{Binding DeleteEventCommand}" Margin="0,0,0,6" />
+                        </WrapPanel>
+                        <WrapPanel Margin="0,0,0,8">
+                            <ui:ToggleSwitch Content="Gravar com os tempos reais" IsChecked="{Binding UseRealDelays}" Margin="0,0,24,0" VerticalAlignment="Center" />
+                            <TextBlock Text="Atraso padrão (ms)" VerticalAlignment="Center" Margin="0,0,8,0" />
+                            <ui:NumberBox Value="{Binding FixedDelayMs}" Minimum="0" Maximum="4095" MaxDecimalPlaces="0" Width="130" />
+                        </WrapPanel>
+                        <Border Visibility="{Binding IsRecording, Converter={StaticResource BoolToVisibility}}"
+                                MinHeight="90" CornerRadius="8" BorderThickness="2" Margin="0,0,0,8" Cursor="Hand"
+                                BorderBrush="{DynamicResource AccentFillColorDefaultBrush}" Background="#2060CDFF"
+                                PreviewMouseDown="OnCaptureMouseDown" PreviewMouseUp="OnCaptureMouseUp">
+                            <TextBlock Text="{Binding RecordingText}" TextWrapping="Wrap" TextAlignment="Center" VerticalAlignment="Center" Margin="16" />
+                        </Border>
+                    </StackPanel>
+                    <TextBlock DockPanel.Dock="Bottom" Text="{Binding EventCountText}" Style="{StaticResource CardLabel}" Margin="0,8,0,0" />
+                    <ListBox ItemsSource="{Binding Events}" SelectedItem="{Binding SelectedEvent}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="28" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="80" />
+                                        <ColumnDefinition Width="160" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="{Binding Glyph}" FontSize="16" VerticalAlignment="Center" />
+                                    <TextBlock Grid.Column="1" Text="{Binding Description}" VerticalAlignment="Center" />
+                                    <TextBlock Grid.Column="2" Text="{Binding ActionText}" Style="{StaticResource CardLabel}" VerticalAlignment="Center" />
+                                    <StackPanel Grid.Column="3" Orientation="Horizontal">
+                                        <ui:NumberBox Value="{Binding DelayMs, UpdateSourceTrigger=LostFocus}" Minimum="0" Maximum="4095" MaxDecimalPlaces="0" Width="120" ToolTip="Espera depois deste evento" />
+                                        <TextBlock Text="ms" VerticalAlignment="Center" Margin="6,0,0,0" />
+                                    </StackPanel>
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </DockPanel>
+            </ui:Card>
+        </Grid>
+    </Grid>
+    </ScrollViewer>
+</Page>

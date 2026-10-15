@@ -1,0 +1,105 @@
+<Page x:Class="M800.App.Pages.ButtonsPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      xmlns:common="clr-namespace:M800.App.Common"
+      xmlns:proto="clr-namespace:M800.Core.Protocol;assembly=M800.Core"
+      Title="Botões"
+      ScrollViewer.CanContentScroll="False">
+    <Page.Resources>
+        <!-- Formatos dos botões no desenho (mesmas coordenadas do Canvas 200×320). -->
+        <PathGeometry x:Key="LeftShape" Figures="M100,8 C48,8 14,44 14,110 L14,128 L100,128 Z" />
+        <PathGeometry x:Key="RightShape" Figures="M100,8 C152,8 186,44 186,110 L186,128 L100,128 Z" />
+        <RectangleGeometry x:Key="WheelShape" Rect="88,34,24,46" RadiusX="12" RadiusY="12" />
+        <RectangleGeometry x:Key="DpiShape" Rect="90,88,20,26" RadiusX="5" RadiusY="5" />
+        <RectangleGeometry x:Key="ForwardShape" Rect="4,140,16,44" RadiusX="7" RadiusY="7" />
+        <RectangleGeometry x:Key="BackShape" Rect="4,186,16,44" RadiusX="7" RadiusY="7" />
+
+        <!-- Área clicável com o formato do botão (Tag = geometria); ao passar o mouse, realce neutro (não azul). -->
+        <Style x:Key="Hotspot" TargetType="Button">
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Width" Value="200" />
+            <Setter Property="Height" Value="320" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid>
+                            <Path Data="{Binding Tag, RelativeSource={RelativeSource TemplatedParent}}" Fill="Transparent" />
+                            <Path x:Name="Glow" Data="{Binding Tag, RelativeSource={RelativeSource TemplatedParent}}"
+                                  Fill="{DynamicResource TextFillColorPrimaryBrush}" Opacity="0" IsHitTestVisible="False" />
+                            <Path x:Name="Edge" Data="{Binding Tag, RelativeSource={RelativeSource TemplatedParent}}"
+                                  Stroke="{DynamicResource TextFillColorPrimaryBrush}" StrokeThickness="2" StrokeLineJoin="Round"
+                                  Opacity="0" IsHitTestVisible="False" />
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Glow" Property="Opacity" Value="0.14" />
+                                <Setter TargetName="Edge" Property="Opacity" Value="0.85" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Glow" Property="Opacity" Value="0.26" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Page.Resources>
+    <ScrollViewer Style="{StaticResource PageScroll}">
+        <StackPanel Style="{StaticResource PagePanel}">
+            <TextBlock Text="Botões" Style="{StaticResource PageTitle}" />
+            <TextBlock Text="Clique num botão do desenho ou da lista para escolher o que ele faz." Style="{StaticResource PageSubtitle}" />
+            <Grid common:Responsive.StackBelow="560">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="250" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <ui:Card VerticalAlignment="Top" Margin="0,0,16,0">
+                    <Viewbox Height="340">
+                        <Canvas Width="200" Height="320">
+                            <Path Data="M100,8 C152,8 186,44 186,110 L186,232 C186,288 150,316 100,316 C50,316 14,288 14,232 L14,110 C14,44 48,8 100,8 Z"
+                                  Fill="{DynamicResource ControlFillColorDefaultBrush}" Stroke="{DynamicResource TextFillColorSecondaryBrush}" StrokeThickness="2" />
+                            <Path Data="M100,8 L100,128 M14,128 L186,128" Stroke="{DynamicResource TextFillColorSecondaryBrush}" StrokeThickness="1.5" />
+                            <Rectangle Canvas.Left="90" Canvas.Top="36" Width="20" Height="42" RadiusX="10" RadiusY="10" Fill="{DynamicResource TextFillColorSecondaryBrush}" />
+                            <Rectangle Canvas.Left="92" Canvas.Top="90" Width="16" Height="22" RadiusX="4" RadiusY="4" Stroke="{DynamicResource TextFillColorSecondaryBrush}" StrokeThickness="1.5" />
+                            <Rectangle Canvas.Left="6" Canvas.Top="142" Width="12" Height="40" RadiusX="5" RadiusY="5" Stroke="{DynamicResource TextFillColorSecondaryBrush}" StrokeThickness="1.5" Fill="{DynamicResource ControlFillColorDefaultBrush}" />
+                            <Rectangle Canvas.Left="6" Canvas.Top="188" Width="12" Height="40" RadiusX="5" RadiusY="5" Stroke="{DynamicResource TextFillColorSecondaryBrush}" StrokeThickness="1.5" Fill="{DynamicResource ControlFillColorDefaultBrush}" />
+
+                            <!-- ordem importa: roda e DPI ficam por cima dos botões esquerdo/direito -->
+                            <Button Style="{StaticResource Hotspot}" Tag="{StaticResource LeftShape}" ToolTip="Botão esquerdo"
+                                    Command="{Binding EditCommand}" CommandParameter="{x:Static proto:ButtonId.Left}" />
+                            <Button Style="{StaticResource Hotspot}" Tag="{StaticResource RightShape}" ToolTip="Botão direito"
+                                    Command="{Binding EditCommand}" CommandParameter="{x:Static proto:ButtonId.Right}" />
+                            <Button Style="{StaticResource Hotspot}" Tag="{StaticResource ForwardShape}" ToolTip="Lateral avançar"
+                                    Command="{Binding EditCommand}" CommandParameter="{x:Static proto:ButtonId.Forward}" />
+                            <Button Style="{StaticResource Hotspot}" Tag="{StaticResource BackShape}" ToolTip="Lateral voltar"
+                                    Command="{Binding EditCommand}" CommandParameter="{x:Static proto:ButtonId.Back}" />
+                            <Button Style="{StaticResource Hotspot}" Tag="{StaticResource WheelShape}" ToolTip="Botão do meio (roda)"
+                                    Command="{Binding EditCommand}" CommandParameter="{x:Static proto:ButtonId.Middle}" />
+                            <Button Style="{StaticResource Hotspot}" Tag="{StaticResource DpiShape}" ToolTip="Botão de DPI"
+                                    Command="{Binding EditCommand}" CommandParameter="{x:Static proto:ButtonId.Dpi}" />
+                        </Canvas>
+                    </Viewbox>
+                </ui:Card>
+
+                <StackPanel Grid.Column="1">
+                    <ItemsControl ItemsSource="{Binding Rows}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <ui:CardAction Margin="0,0,0,8" Icon="{ui:SymbolIcon CursorClick24}"
+                                               Command="{Binding DataContext.EditCommand, RelativeSource={RelativeSource AncestorType=Page}}"
+                                               CommandParameter="{Binding Id}">
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding Name}" FontWeight="SemiBold" />
+                                        <TextBlock Text="{Binding Action}" Style="{StaticResource CardLabel}" />
+                                    </StackPanel>
+                                </ui:CardAction>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    <ui:Button Content="Restaurar botões de fábrica" Icon="{ui:SymbolIcon ArrowReset24}" Command="{Binding RestoreDefaultsCommand}" Margin="0,8,0,0" />
+                </StackPanel>
+            </Grid>
+        </StackPanel>
+    </ScrollViewer>
+</Page>

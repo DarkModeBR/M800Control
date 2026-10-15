@@ -1,0 +1,81 @@
+<Page x:Class="M800.App.Pages.PointerPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      Title="Ponteiro"
+      ScrollViewer.CanContentScroll="False">
+    <ScrollViewer Style="{StaticResource PageScroll}">
+        <StackPanel Style="{StaticResource PagePanel}">
+            <TextBlock Text="Ponteiro" Style="{StaticResource PageTitle}" />
+            <TextBlock Text="Configurações do ponteiro do Windows guardadas neste perfil. São aplicadas ao ativar o perfil, como se você mudasse pelo Painel de Controle." Style="{StaticResource PageSubtitle}" />
+
+            <ui:CardControl Icon="{ui:SymbolIcon DesktopCursor24}" Margin="0,0,0,16">
+                <ui:CardControl.Header>
+                    <StackPanel>
+                        <TextBlock Text="Controlar o ponteiro do Windows" FontWeight="SemiBold" />
+                        <TextBlock Text="Desligado, o app não mexe nas configurações do Windows. Ao ligar, ele começa dos valores que você usa hoje." Style="{StaticResource CardLabel}" MaxWidth="460" />
+                    </StackPanel>
+                </ui:CardControl.Header>
+                <ui:ToggleSwitch IsChecked="{Binding Enabled}" />
+            </ui:CardControl>
+
+            <StackPanel IsEnabled="{Binding Enabled}">
+                <ui:CardControl Icon="{ui:SymbolIcon Cursor24}" Margin="0,0,0,8">
+                    <ui:CardControl.Header>
+                        <StackPanel>
+                            <TextBlock Text="Velocidade do ponteiro" FontWeight="SemiBold" />
+                            <TextBlock Text="10 move o cursor exatamente o que o sensor lê (1:1). Para ajustar a sensibilidade, prefira mudar o DPI." Style="{StaticResource CardLabel}" MaxWidth="460" />
+                        </StackPanel>
+                    </ui:CardControl.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <Slider Minimum="1" Maximum="20" Value="{Binding Speed}" IsSnapToTickEnabled="True" TickFrequency="1" Width="200" VerticalAlignment="Center" />
+                        <TextBlock Text="{Binding SpeedText}" Width="70" Margin="12,0,0,0" VerticalAlignment="Center" />
+                    </StackPanel>
+                </ui:CardControl>
+
+                <ui:CardControl Icon="{ui:SymbolIcon Games24}" Margin="0,0,0,8">
+                    <ui:CardControl.Header>
+                        <StackPanel>
+                            <TextBlock Text="Aumentar precisão do ponteiro (aceleração)" FontWeight="SemiBold" />
+                            <TextBlock Text="Movimentos rápidos levam o cursor mais longe. Para jogos, deixe desligado: a mira fica sempre igual." Style="{StaticResource CardLabel}" MaxWidth="460" />
+                        </StackPanel>
+                    </ui:CardControl.Header>
+                    <ui:ToggleSwitch IsChecked="{Binding Acceleration}" />
+                </ui:CardControl>
+
+                <ui:CardControl Icon="{ui:SymbolIcon ArrowSortDown24}" Margin="0,0,0,8">
+                    <ui:CardControl.Header>
+                        <StackPanel>
+                            <TextBlock Text="Rolagem da roda" FontWeight="SemiBold" />
+                            <TextBlock Text="Quantas linhas cada clique da roda rola, ou uma tela inteira por vez." Style="{StaticResource CardLabel}" MaxWidth="460" />
+                        </StackPanel>
+                    </ui:CardControl.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <Slider Minimum="1" Maximum="20" Value="{Binding ScrollLines}" IsSnapToTickEnabled="True" TickFrequency="1" Width="150" VerticalAlignment="Center"
+                                IsEnabled="{Binding PageScroll, Converter={StaticResource InverseBool}}" />
+                        <TextBlock Text="{Binding ScrollText}" Width="70" Margin="12,0,16,0" VerticalAlignment="Center" />
+                        <CheckBox Content="Uma tela por vez" IsChecked="{Binding PageScroll}" VerticalAlignment="Center" />
+                    </StackPanel>
+                </ui:CardControl>
+
+                <ui:CardControl Icon="{ui:SymbolIcon TapDouble24}" Margin="0,0,0,8">
+                    <ui:CardControl.Header>
+                        <StackPanel>
+                            <TextBlock Text="Velocidade do clique duplo" FontWeight="SemiBold" />
+                            <TextBlock Text="Tempo máximo entre dois cliques para o Windows entender um clique duplo." Style="{StaticResource CardLabel}" MaxWidth="460" />
+                        </StackPanel>
+                    </ui:CardControl.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <Slider Minimum="200" Maximum="900" Value="{Binding DoubleClickMs}" IsSnapToTickEnabled="True" TickFrequency="50" Width="200" VerticalAlignment="Center" />
+                        <TextBlock Text="{Binding DoubleClickText}" Width="70" Margin="12,0,0,0" VerticalAlignment="Center" />
+                    </StackPanel>
+                </ui:CardControl>
+
+                <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                    <ui:Button Content="Modo jogo (1:1, sem aceleração)" Icon="{ui:SymbolIcon Games24}" Appearance="Primary" Command="{Binding GameModeCommand}" Margin="0,0,8,0" />
+                    <ui:Button Content="Padrão do Windows" Icon="{ui:SymbolIcon ArrowReset24}" Command="{Binding WindowsDefaultsCommand}" />
+                </StackPanel>
+            </StackPanel>
+        </StackPanel>
+    </ScrollViewer>
+</Page>

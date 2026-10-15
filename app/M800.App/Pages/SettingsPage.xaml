@@ -1,0 +1,86 @@
+<Page x:Class="M800.App.Pages.SettingsPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      Title="Configurações"
+      ScrollViewer.CanContentScroll="False">
+    <ScrollViewer Style="{StaticResource PageScroll}">
+        <StackPanel Style="{StaticResource PagePanel}">
+            <TextBlock Text="Configurações" Style="{StaticResource PageTitle}" />
+            <TextBlock Text="Preferências do aplicativo." Style="{StaticResource PageSubtitle}" />
+
+            <ui:CardControl Icon="{ui:SymbolIcon Desktop24}" Margin="0,0,0,8">
+                <ui:CardControl.Header>
+                    <StackPanel>
+                        <TextBlock Text="Iniciar com o Windows" FontWeight="SemiBold" />
+                        <TextBlock Text="Abre minimizado na bandeja ao ligar o computador." Style="{StaticResource CardLabel}" />
+                    </StackPanel>
+                </ui:CardControl.Header>
+                <ui:ToggleSwitch IsChecked="{Binding StartWithWindows}" />
+            </ui:CardControl>
+
+            <ui:CardControl Icon="{ui:SymbolIcon BatteryWarning24}" Margin="0,0,0,8">
+                <ui:CardControl.Header>
+                    <StackPanel>
+                        <TextBlock Text="Alerta de bateria baixa" FontWeight="SemiBold" />
+                        <TextBlock Text="Notificação do Windows uma vez por descarga." Style="{StaticResource CardLabel}" />
+                    </StackPanel>
+                </ui:CardControl.Header>
+                <StackPanel Orientation="Horizontal">
+                    <Slider Minimum="5" Maximum="50" Value="{Binding BatteryAlertThreshold}" IsSnapToTickEnabled="True" TickFrequency="5"
+                            Width="160" VerticalAlignment="Center" IsEnabled="{Binding BatteryAlertEnabled}" />
+                    <TextBlock Text="{Binding ThresholdText}" Width="44" Margin="10,0,16,0" VerticalAlignment="Center" />
+                    <ui:ToggleSwitch IsChecked="{Binding BatteryAlertEnabled}" />
+                </StackPanel>
+            </ui:CardControl>
+
+            <ui:CardControl Icon="{ui:SymbolIcon TopSpeed24}" Margin="0,0,0,8">
+                <ui:CardControl.Header>
+                    <StackPanel>
+                        <TextBlock Text="Mostrar indicador de DPI na tela" FontWeight="SemiBold" />
+                        <TextBlock Text="Ao trocar o DPI (no mouse ou no app), mostra o valor por um instante embaixo, no centro da tela." Style="{StaticResource CardLabel}" />
+                    </StackPanel>
+                </ui:CardControl.Header>
+                <ui:ToggleSwitch IsChecked="{Binding DpiIndicatorEnabled}" />
+            </ui:CardControl>
+
+            <ui:CardControl Icon="{ui:SymbolIcon Color24}" Margin="0,0,0,8">
+                <ui:CardControl.Header>
+                    <StackPanel>
+                        <TextBlock Text="Tema" FontWeight="SemiBold" />
+                        <TextBlock Text="Aparência do aplicativo." Style="{StaticResource CardLabel}" />
+                    </StackPanel>
+                </ui:CardControl.Header>
+                <ComboBox ItemsSource="{Binding Themes}" SelectedItem="{Binding SelectedTheme}" DisplayMemberPath="Name" MinWidth="200" />
+            </ui:CardControl>
+
+            <ui:CardControl Icon="{ui:SymbolIcon Folder24}" Margin="0,0,0,8">
+                <ui:CardControl.Header>
+                    <StackPanel>
+                        <TextBlock Text="Pasta de dados e log" FontWeight="SemiBold" />
+                        <TextBlock Text="Perfis, configurações e o registro de todos os pacotes enviados ao mouse." Style="{StaticResource CardLabel}" />
+                    </StackPanel>
+                </ui:CardControl.Header>
+                <StackPanel Orientation="Horizontal">
+                    <ui:Button Content="Abrir pasta" Command="{Binding OpenDataFolderCommand}" Margin="0,0,8,0" />
+                    <ui:Button Content="Abrir log" Command="{Binding OpenLogCommand}" />
+                </StackPanel>
+            </ui:CardControl>
+
+            <ui:CardControl Icon="{ui:SymbolIcon ArrowReset24}" Margin="0,0,0,8">
+                <ui:CardControl.Header>
+                    <StackPanel>
+                        <TextBlock Text="Restaurar padrões de fábrica" FontWeight="SemiBold" />
+                        <TextBlock Text="Envia o comando de reset ao mouse." Style="{StaticResource CardLabel}" />
+                    </StackPanel>
+                </ui:CardControl.Header>
+                <ui:Button Content="Restaurar" Appearance="Danger" Command="{Binding FactoryResetCommand}" />
+            </ui:CardControl>
+
+            <TextBlock Text="Sobre" Style="{StaticResource SectionTitle}" />
+            <ui:Card>
+                <TextBlock Text="{Binding AboutText}" TextWrapping="Wrap" LineHeight="22" />
+            </ui:Card>
+        </StackPanel>
+    </ScrollViewer>
+</Page>
