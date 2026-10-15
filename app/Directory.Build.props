@@ -1,0 +1,9 @@
+<Project>
+  <PropertyGroup>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <Version>1.0.0</Version>
+    <Company>M800 Control</Company>
+    <Product>M800 Control</Product>
+  </PropertyGroup>
+</Project>
