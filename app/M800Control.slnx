@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="M800.App/M800.App.csproj" />
+  <Project Path="M800.Core.Tests/M800.Core.Tests.csproj" />
+  <Project Path="M800.Core/M800.Core.csproj" />
+</Solution>
